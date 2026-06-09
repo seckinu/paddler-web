@@ -27,7 +27,7 @@ export const FEATURES = [
 
 export async function get_matches(input: string): Promise<string[]> {
 	const { stdout } = Deno.spawn("./engine", {
-		args: [input, "--dict=en.txt"],
+		args: [input.trim(), "--dict=en.txt"],
 		stdout: "piped",
 	});
 
