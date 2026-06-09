@@ -1,21 +1,22 @@
 ---
-import { DICTIONARIES, FEATURES, get_matches } from "../utils/paddler";
 import ipa from "../../ipa_base.json";
+import {
+	FEATURES,
+	get_dicts,
+	get_matches,
+	validate_dict_string,
+} from "../utils/paddler";
+
+const dicts = get_dicts();
 
 const params = Astro.url.searchParams;
 
 const query = params.get("query");
-const _dict = params.get("dict");
+const dict = validate_dict_string(dicts, params.get("dict")) ?? "en_US";
 
-function assert_dict(val: string): val is (typeof DICTIONARIES)[number] {
-	return (DICTIONARIES as ReadonlyArray<string>).includes(val);
-}
+console.log({ query, dict });
 
-const dict = _dict && assert_dict(_dict) ? _dict : undefined;
-
-console.log({ dict, _dict });
-
-const results = query ? await get_matches(query, dict) : [];
+const results = query && dict ? await get_matches(query, dict) : [];
 ---
 
 <html lang="en">
@@ -25,14 +26,14 @@ const results = query ? await get_matches(query, dict) : [];
 		<link rel="icon" href="/favicon.ico" />
 		<meta name="viewport" content="width=device-width" />
 		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
+		<title>Online Phonetic Dictionary</title>
 	</head>
 	<body>
 		<main>
 			<form method="get" action="/">
 				<select name="dict" id="dict-select">
 					{
-						DICTIONARIES.map((val) => (
+						dicts.map((val) => (
 							<option value={val} selected={val === dict}>
 								{val}
 							</option>

@@ -25,11 +25,28 @@ export const FEATURES = [
 	"highregister",
 ] as const;
 
-export const DICTIONARIES = ["en_US", "en_CMUDICT"] as const;
+export function get_dicts(): string[] {
+	return Deno.readDirSync("./dictionaries")
+		.flatMap((entry) => {
+			if (!entry.isFile) {
+				return [];
+			}
+
+			return [entry.name];
+		})
+		.toArray();
+}
+
+export function validate_dict_string(
+	dicts: string[],
+	val: string | null,
+): string | null {
+	return val ? (dicts.includes(val) ? val : null) : null;
+}
 
 export async function get_matches(
 	input: string,
-	dict: (typeof DICTIONARIES)[number] = DICTIONARIES[0],
+	dict: string,
 ): Promise<string[]> {
 	const { stdout } = Deno.spawn("./engine", {
 		args: [input.trim(), `--dict=./dictionaries/${dict}.txt`],
