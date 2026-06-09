@@ -2,6 +2,9 @@
 	"tasks": {
 		"dev": "deno run -A npm:astro dev",
 		"build": "deno run -A npm:astro build",
+		"build:paddler": {
+			"command": "cargo build --manifest-path=./paddler/Cargo.toml && cp ./paddler/target/release/paddler ./engine"
+		},
 		"preview": "deno run --allow-net --allow-read=./dictionaries/*.{txt,tsv} --allow-env --allow-run=./engine ./dist/server/entry.mjs"
 	}
 }
