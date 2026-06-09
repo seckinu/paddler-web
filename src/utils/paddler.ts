@@ -32,7 +32,7 @@ export function get_dicts(): string[] {
 				return [];
 			}
 
-			return [entry.name];
+			return [entry.name.split(".")[0]];
 		})
 		.toArray();
 }
