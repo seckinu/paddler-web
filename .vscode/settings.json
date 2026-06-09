@@ -1,0 +1,4 @@
+{
+	"deno.enable": true,
+	"js/ts.tsserver.experimental.enableProjectDiagnostics": false
+}

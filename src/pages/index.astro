@@ -1,5 +1,10 @@
 ---
+import { FEATURES, get_matches } from "../utils/paddler";
+import ipa from "../../ipa_base.json";
 
+const params = Astro.url.searchParams;
+const query = params.get("query");
+const results = query ? await get_matches(query) : [];
 ---
 
 <html lang="en">
@@ -12,6 +17,71 @@
 		<title>Astro</title>
 	</head>
 	<body>
-		<h1>Astro</h1>
+		<main>
+			<form method="get" action="/">
+				<input
+					id="search"
+					placeholder="Search..."
+					name="query"
+					value={query}
+				/>
+				<button type="submit">Search</button>
+				<div>
+					<div>
+						{
+							FEATURES.map((f) => (
+								<button data-feature={f}>{f}</button>
+							))
+						}
+					</div>
+					<div>
+						{
+							ipa.map((item) => {
+								return (
+									<button
+										data-feature={item.ipa}
+										title={Object.entries(item)
+											.filter(
+												([_key, val]) =>
+													val === "+" || val === "-",
+											)
+											.map(([key, _val]) => _val + key)
+											.join(",")}
+									>
+										{item.ipa}
+									</button>
+								);
+							})
+						}
+					</div>
+				</div>
+			</form>
+
+			<ul
+				style="display:grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); height: 100ch; overflow: scroll; background-color:aliceblue"
+			>
+				{
+					results.map((item) => (
+						<li style="list-style-type: none;"> {item} </li>
+					))
+				}
+			</ul>
+		</main>
 	</body>
 </html>
+
+<script>
+	const input = document.querySelector("input#search") as HTMLInputElement;
+
+	document.querySelectorAll("form>div button").forEach((button) => {
+		(button as HTMLButtonElement).addEventListener("click", (e) => {
+			e.preventDefault();
+
+			const feature = button.getAttribute("data-feature");
+
+			if (feature) {
+				input.value += feature;
+			}
+		});
+	});
+</script>
