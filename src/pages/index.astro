@@ -1,10 +1,21 @@
 ---
-import { FEATURES, get_matches } from "../utils/paddler";
+import { DICTIONARIES, FEATURES, get_matches } from "../utils/paddler";
 import ipa from "../../ipa_base.json";
 
 const params = Astro.url.searchParams;
+
 const query = params.get("query");
-const results = query ? await get_matches(query) : [];
+const _dict = params.get("dict");
+
+function assert_dict(val: string): val is (typeof DICTIONARIES)[number] {
+	return (DICTIONARIES as ReadonlyArray<string>).includes(val);
+}
+
+const dict = _dict && assert_dict(_dict) ? _dict : undefined;
+
+console.log({ dict, _dict });
+
+const results = query ? await get_matches(query, dict) : [];
 ---
 
 <html lang="en">
@@ -19,6 +30,15 @@ const results = query ? await get_matches(query) : [];
 	<body>
 		<main>
 			<form method="get" action="/">
+				<select name="dict" id="dict-select">
+					{
+						DICTIONARIES.map((val) => (
+							<option value={val} selected={val === dict}>
+								{val}
+							</option>
+						))
+					}
+				</select>
 				<input
 					id="search"
 					placeholder="Search..."
@@ -26,6 +46,7 @@ const results = query ? await get_matches(query) : [];
 					value={query}
 				/>
 				<button type="submit">Search</button>
+
 				<div>
 					<div>
 						{

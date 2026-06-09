@@ -2,6 +2,6 @@
 	"tasks": {
 		"dev": "deno run -A npm:astro dev",
 		"build": "deno run -A npm:astro build",
-		"preview": "deno run --allow-net --allow-read=en_US.txt --allow-read=en.txt --allow-env --allow-run=./engine ./dist/server/entry.mjs"
+		"preview": "deno run --allow-net --allow-read=./dictionaries/*.{txt,tsv} --allow-env --allow-run=./engine ./dist/server/entry.mjs"
 	}
 }
